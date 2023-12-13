@@ -1,0 +1,36 @@
+version: '3.9'
+
+networks:
+  net_learn:
+    name: net_learn
+    driver: bridge
+
+services:
+
+  learn-nginx:
+    build: 
+      context: ./.docker/
+      dockerfile: Dockerfile
+    container_name: container-learn
+    restart: unless-stopped
+    ports:
+      - 80:80
+    volumes:
+      - ./:/var/www/html
+    networks:
+      - net_learn
+
+  learn-postgres:
+    container_name: container-postgres
+    image: postgres:16.1
+    environment:
+      - POSTGRES_DB=learn
+      - POSTGRES_PASSWORD=secret
+      - POSTGRES_USER=postgres
+    volumes:
+      - ./.docker/postgres/volume:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+    networks:
+      - net_learn
+
